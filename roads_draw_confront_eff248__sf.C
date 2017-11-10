@@ -75,7 +75,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TCanvas * confront_eff = new TCanvas();
 	TLegend * legend = new TLegend(0.4,0.3, 0.8,0.5);
 	TMultiGraph *mg = new TMultiGraph();
-	mg->SetTitle("road eff - comparison - 200,400,800; # road truncation; efficiency");
+	mg->SetTitle("road eff "+TString(name_sf[3])+" "+TString(name_sf[4])+"; # road truncation; efficiency");
 
 	confront_eff->SetGridx();
 	confront_eff->SetGridy();
