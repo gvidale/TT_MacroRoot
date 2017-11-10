@@ -40,7 +40,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 
 	std::string string_toparse;
 	std::vector<TString> token;
-	if (myfile[0].is_open())
+	if (myfile[0]->is_open())
 	{
 		cout << "reading files..." << endl;
 		while ( getline(myfile[0],line) )
@@ -61,7 +61,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 
 			fName.push_back(name_sf); //si piglia il puntatore al primo elemento della coppia
 		}
-		myfile[0].close();
+		myfile[0]->close();
 	}
 	else cout << "Unable to open file";
 
