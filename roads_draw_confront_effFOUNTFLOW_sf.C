@@ -27,7 +27,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 	typedef boost::tokenizer<boost::char_separator<char> > Tokenizer; //Class
 	boost::char_separator<char> sep("_");// default constructed. can give full path of my home. there are 3 _ before true path starts.
 	vector < vector<string> > fName;
-	vector <string> name_sf(5,"");
+	vector <string> name_sf(6,"");
 
 
 	string line;
@@ -55,6 +55,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 			name_sf[2]=token[7];//sf_disks
 			name_sf[3]=token[5];//type ss
 			name_sf[4]=token[10];//AM size
+			name_sf[5]=token[3]; //tower
 
 			fName.push_back(name_sf); //si piglia il puntatore al primo elemento della coppia
 		}
