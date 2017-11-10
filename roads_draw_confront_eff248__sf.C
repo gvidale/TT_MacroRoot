@@ -92,7 +92,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 			cout << "ERROR. Not able to load the input ntuple file. Exiting..." << endl;
 			return;
 		}
-		f_input[i]->GetObject("raw_roads_combs",eff[i]);
+		f_input[i]->GetObject("raw_roads_combs;1",eff[i]);
 
 		eff_name1 = "barr_sf "+TString(fName[i][1])+" | disks_sf "+TString(fName[i][2]);
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
