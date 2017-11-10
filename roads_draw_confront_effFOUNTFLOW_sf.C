@@ -69,8 +69,8 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 		{
 			cout << line << '\n';
 			string_toparse = line;
-			Tokenizer tok(string_toparse, sep);
-			for(Tokenizer::iterator tok_iter = tok.begin(); tok_iter != tok.end(); ++tok_iter){
+			Tokenizer tok1(string_toparse, sep);
+			for(Tokenizer::iterator tok_iter = tok1.begin(); tok_iter != tok1.end(); ++tok_iter){
 				token.push_back(*tok_iter);
 				//		std::cout<< *tok_iter << std::endl;//maybe need to be stringed. (what the iterator cointains)
 			}
