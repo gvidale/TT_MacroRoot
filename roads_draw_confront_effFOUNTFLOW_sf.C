@@ -34,16 +34,13 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 	ifstream  myfilefount(file_list_fount);
 	ifstream myfileflow(file_list_flower);
 
-	ifstream  * myfile[2];
-	myfile[0] = & myfilefount;
-	myfile[1] = & myfileflow;
 
 	std::string string_toparse;
 	std::vector<TString> token;
-	if (myfile[0]->is_open())
+	if (myfilefount.is_open())
 	{
 		cout << "reading files..." << endl;
-		while ( getline(myfile[0],line) )
+		while ( getline(myfilefount,line) )
 		{
 			cout << line << '\n';
 			string_toparse = line;
@@ -61,10 +58,35 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 
 			fName.push_back(name_sf); //si piglia il puntatore al primo elemento della coppia
 		}
-		myfile[0]->close();
+		myfilefount.close();
 	}
 	else cout << "Unable to open file";
 
+	if (myfileflow.is_open())
+	{
+		cout << "reading files..." << endl;
+		while ( getline(myfileflow,line) )
+		{
+			cout << line << '\n';
+			string_toparse = line;
+			Tokenizer tok(string_toparse, sep);
+			for(Tokenizer::iterator tok_iter = tok.begin(); tok_iter != tok.end(); ++tok_iter){
+				token.push_back(*tok_iter);
+				//		std::cout<< *tok_iter << std::endl;//maybe need to be stringed. (what the iterator cointains)
+			}
+
+			name_sf[0]=line; //full name file
+			name_sf[1]=token[6];//sfbarrel
+			name_sf[2]=token[7];//sf_disks
+			name_sf[3]=token[5];//type ss
+			name_sf[4]=token[10];//AM size
+			name_sf[5]=token[3]; //tower
+
+			fName.push_back(name_sf); //si piglia il puntatore al primo elemento della coppia
+		}
+		myfileflow.close();
+	}
+	else cout << "Unable to open file";
 
 	// Parse the definition string -->  file list = xxxxx_sf1_sf8_xxxxxx
 
@@ -81,7 +103,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 	TCanvas * confront_eff = new TCanvas();
 	TLegend * legend = new TLegend(0.4,0.3, 0.8,0.5);
 	TMultiGraph *mg = new TMultiGraph();
-	mg->SetTitle("road eff - comparison - 200,400,800; # road truncation; efficiency");
+	mg->SetTitle("road eff - comparison - FOUNT @400 | flow @200; # road truncation; efficiency");
 
 	confront_eff->SetGridx();
 	confront_eff->SetGridy();
@@ -93,7 +115,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
-		f_input[i] = new TFile(TString(fName[i][0]));
+		f_input[i] = new TFile(TString(fName_fount[i][0]));
 		if (f_input[i]->IsZombie()) {
 			cout << "ERROR. Not able to load the input ntuple file. Exiting..." << endl;
 			return;
@@ -107,14 +129,23 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 		gr[i]= new TGraph(eff[i]->GetSelectedRows(), eff[i]->GetV2(), eff[i]->GetV1());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(2);
-		gr[i]->SetMarkerColor(i+1);
-		gr[i]->SetLineColor(i+1); //0 is white
-//		gr[i]->SetTitle(eff_name);
 		gr[i]->SetFillStyle(0);
+
+		if (fName[i][5]=="fount"){
+		gr[i]->SetMarkerColor(kRed);
+		gr[i]->SetLineColor(kRed); //0 is white
+		}
+		else {
+			gr[i]->SetMarkerColor(kRed);
+			gr[i]->SetLineColor(kRed); //0 is white
+		}
+
 		mg->Add(gr[i],"");
-		legend->AddEntry(gr[i],"#splitline{"+eff_name1+"}{"+eff_name2+"}");
+
 	}
 
+	legend->AddEntry(gr[0],"fountain @400 256K");
+	legend->AddEntry(gr[size-1], "flower @200 128K");
 	mg->Draw("apl");
 
 	legend->Draw();
