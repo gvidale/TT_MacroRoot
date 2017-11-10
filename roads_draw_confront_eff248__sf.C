@@ -100,7 +100,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 		eff[i]->Draw("road_eff:road_truncation:errUp","","goff"); //what leafs to plot
 		gr[i]= new TGraphErrors(eff[i]->GetEntries(), eff[i]->GetV2(), eff[i]->GetV1(), 0,eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
-		gr[i]->SetMarkerSize(2);
+		gr[i]->SetMarkerSize(0.8);
 		gr[i]->SetMarkerColor(i+1);
 		gr[i]->SetLineColor(i+1); //0 is white
 //		gr[i]->SetTitle(eff_name);
@@ -109,7 +109,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 		legend->AddEntry(gr[i],"#splitline{"+eff_name1+"}{"+eff_name2+"}");
 	}
 
-	mg->Draw("ap");
+	mg->Draw("apl");
 
 	//legend->Draw();
 
