@@ -126,20 +126,25 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 		eff_name1 = "barr_sf "+TString(fName[i][1])+" | disks_sf "+TString(fName[i][2]);
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
 //		eff[i]->SetName(eff_name);
-		eff[i]->Draw("road_eff:road_truncation:errUp","","goff"); //what leafs to plot
-		gr[i]= new TGraphErrors(eff[i]->GetEntries(), eff[i]->GetV2(), eff[i]->GetV1(),eff[i]->GetV3());
-		gr[i]->SetMarkerStyle(21);
-//		gr[i]->SetMarkerSize(2);
-		gr[i]->SetFillStyle(0);
 
 		if (fName[i][5]=="fount"){
 		gr[i]->SetMarkerColor(kRed);
 		gr[i]->SetLineColor(kRed); //0 is white
+		eff[i]->Draw("road_eff[1]:road_truncation[1]:errUp[1]","","goff"); //what leafs to plot
+		gr[i]= new TGraphErrors(eff[i]->GetEntries(), eff[i]->GetV2(), eff[i]->GetV1(),eff[i]->GetV3());
 		}
 		else {
 			gr[i]->SetMarkerColor(kRed);
 			gr[i]->SetLineColor(kRed); //0 is white
+			eff[i]->Draw("road_eff[0]:road_truncation[0]:errUp[0]","","goff"); //what leafs to plot
+			gr[i]= new TGraphErrors(eff[i]->GetEntries(), eff[i]->GetV2(), eff[i]->GetV1(),eff[i]->GetV3());
 		}
+
+
+		gr[i]->SetMarkerStyle(21);
+//		gr[i]->SetMarkerSize(2);
+		gr[i]->SetFillStyle(0);
+
 
 		mg->Add(gr[i],"");
 
