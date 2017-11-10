@@ -109,7 +109,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 		legend->AddEntry(gr[i],"#splitline{"+eff_name1+"}{"+eff_name2+"}");
 	}
 
-	mg->Draw("apl");
+	mg->Draw("ap");
 
 	//legend->Draw();
 
