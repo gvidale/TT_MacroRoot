@@ -14,7 +14,7 @@
 #include "functions.h"
 #include <TEfficiency.h>
 #include <TLegend.h>
-#include <TGraph.h>
+#include <TGraphErrors.h>
 #include <TMultiGraph.h>
 #include <fstream>
 #include <string>
@@ -71,7 +71,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 
 	TNtuple * eff[size];
-	TGraph * gr[size];
+	TGraphErrors * gr[size];
 	TCanvas * confront_eff = new TCanvas();
 	TLegend * legend = new TLegend(0.4,0.3, 0.8,0.5);
 	TMultiGraph *mg = new TMultiGraph();
@@ -98,7 +98,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
 //		eff[i]->SetName(eff_name);
 		eff[i]->Draw("road_eff:road_truncation","","goff"); //what leafs to plot
-		gr[i]= new TGraph(eff[i]->GetSelectedRows(), eff[i]->GetV2(), eff[i]->GetV1());
+		gr[i]= new TGraphErrors(eff[i]->GetEntries(), eff[i]->GetV1(), eff[i]->GetV2(), eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(2);
 		gr[i]->SetMarkerColor(i+1);
@@ -111,7 +111,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 	mg->Draw("apl");
 
-	legend->Draw();
+	//legend->Draw();
 
 	return;
 }
