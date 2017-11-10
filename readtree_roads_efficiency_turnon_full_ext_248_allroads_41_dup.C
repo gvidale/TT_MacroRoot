@@ -23,6 +23,7 @@ Giorgio Vidale
 #include <TEfficiency.h>
 #include <TLegend.h>
 #include <iomanip>
+#include <ios>
 
 void readtree_roads::Loop(TString key,Int_t charge)
 {
@@ -70,13 +71,15 @@ void readtree_roads::Loop(TString key,Int_t charge)
 
 	map<Int_t, Int_t > setOfmu;		//keep trace of a single true-mu trkpart
 	map<Int_t, Bool_t> setOfmu_recognized; //recognized bool
+	map<Int_t, pair <Int_t, Int_t> > mapofn_stub; //keep track of #fake stub in each layer maè[lay] = pair (#u-stub, #other-stub)
+	pair <Int_t, Int_t> n_mu_n_other;
 	pair < map<Int_t, Bool_t>::iterator , Bool_t>  alreadyRecognYES;
 
 	TNtuple * ntuple_allinfo = new TNtuple("ntuple_allinfo","ntuple_allinfo","event:road_fired:good_road_index");
 	TNtuple * ntuple_not_reconstr = new TNtuple("ntuple_not_reconstr","ntuple_not_reconstr","event:trkPart_index:trkPart_pdgID:trkPart_pt:trkPart_eta:trkPart_phi");
 	TNtuple * raw_roads_eff = new TNtuple("raw_roads_eff","raw_roads_eff", "road_truncation:efficiency");
-	TNtuple * raw_roads_combs = new TNtuple("raw_roads_combs","Results with truncation"+key, "road_truncation:avg_r_fired:avg_r_f95:avg_rds_before_reconstr:avg_r_quant95:comb_mean:comb_quant95:road_eff:errUp:errDown");
-	TNtuple * r_fak_dup = new TNtuple("r_fak_dup","r_fak_dup", "event:fired:good:fake");
+	TNtuple * raw_roads_combs = new TNtuple("raw_roads_combs","Results with truncation"+key, "road_truncation:avg_r_fired:avg_r_f95:avg_rds_before_reconstr:avg_r_quant95:comb_mean:comb_quant95:road_eff:errUp:errDown:n_dup_comb_mean:n_dup_comb_mean_95:n_fak_comb_mean:n_fak_comb_95");
+	TNtuple * r_fak_dup = new TNtuple("road_good_notgood","road_good_notgood", "event:fired:good:notgood");
 //	ntuple_not_reconstr->Scan("","","colsize=11 precision=4")
 //	command to print ntuple in good format
 
@@ -88,13 +91,8 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	Float_t xbins[18]={2,3,4,5,6,7,8,9,10,20,30,40,50,70,90,110,150,200}; //18 here -> nbins = xbins size -1 = 17
 	TH1F * phi[5]; TH1F * eta[5]; TH1F * pt[5];
 	TEfficiency *eff_phi[4]; TEfficiency * eff_eta[4]; TEfficiency * eff_pt[4]; TH1I * road_read_before_reconstruction[4];
-	TH1F * duplicate = new TH1F("duplicate", "duplicate"+key, 100,0, 100);
-	duplicate -> SetTitle("ratio duplicates/roads_fired "+ key+";ratio duplicates/fired; frequency");
 
-	TH1F * fakes = new TH1F("fakes", "fakes"+key, 100,0, 100);
-	fakes -> SetTitle("ratio fakes/roads_fired "+ key+";ratio fakes/fired; frequency");
-
-	TH1F * combs_evt[3];
+	TH1F * combs_evt[3]; TH1F * dup_comb[3]; TH1F * fak_comb[3];
 	const int trunc[3]={200,400,800};
 	TString namehisto[5] = {"_denominator","_infroads","_200","_400","_800"};
 	TString name_charge;
@@ -103,26 +101,36 @@ void readtree_roads::Loop(TString key,Int_t charge)
 
 	//41 eta 1.2 2.4; 25 eta -0.5 1.5
 	//41 phi 0.6 1.8; 25 phi 0.6 1.75
+	TH1F * duplicate = new TH1F("duplicate"+name_charge, "duplicate"+key, 100,0, 100);
+        duplicate -> SetTitle("ratio duplicates/roads_fired "+ key+";ratio duplicates/fired; frequency");
+        TH1F * fakes = new TH1F("fakes"+name_charge, "fakes"+key, 100,0, 100);
+        fakes -> SetTitle("ratio fakes/roads_fired "+ key+";ratio fakes/fired; frequency");
+
+
 	
 	for (int y=0; y<5;++y){
 		sprintf(name,"mu_phi_%2i"+namehisto[y]+name_charge,tower);
 		phi[y] = new TH1F(name,name,20,0.60,1.8);
 		phi[y]->Sumw2();
-		phi[y]->SetTitle(TString(name)+";phi [rad];counts");
+		phi[y]->SetTitle(TString(name)+";#phi [rad];counts");
 		sprintf(name,"mu_eta_%2i"+namehisto[y]+name_charge,tower);
 		eta[y] = new TH1F(name,name, 20,1.2,2.4);
 		eta[y]->Sumw2();
-		eta[y]->SetTitle(TString(name)+";eta;counts");
+		eta[y]->SetTitle(TString(name)+";#eta;counts");
 		sprintf(name,"mu_pt_%2i"+namehisto[y]+name_charge,tower);
 		pt[y]  = new TH1F(name,name,17,xbins);
 		pt[y]->Sumw2();
-		pt[y]->SetTitle(TString(name)+";pt [GeV/c];counts");
+		pt[y]->SetTitle(TString(name)+";p_{T} [GeV/c];counts");
 	}
 
 //	}
 	for (int y=0; y<3;++y){
-		combs_evt[y] = new TH1F("tot_combs_evt@"+namehisto[y+2]+name_charge,"",100,0,10000);
+		combs_evt[y] = new TH1F("tot_combs_evt@"+namehisto[y+2]+name_charge,"",500,0,10000);
 		combs_evt[y]->SetTitle("combs per evt @"+namehisto[y+2]+name_charge+"; # total combs per evt; counts");
+		dup_comb[y] = new TH1F("tot_dup_comb_@"+namehisto[y+2]+name_charge,"",500,0,10000);
+		dup_comb[y]->SetTitle("tot_duplicates_combinations_@"+namehisto[y+2]+name_charge+"; # total duplicate combinations; counts");
+		fak_comb[y] = new TH1F("tot_fak_comb_@"+namehisto[y+2]+name_charge,"",500,0,10000);
+		fak_comb[y]->SetTitle("tot_fake_combinations_@"+namehisto[y+2]+name_charge+"; # total fake combinations; counts");
 		}
 	
 	for (int y=0; y<4;++y){
@@ -137,11 +145,18 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	TH1I * candid_r_evt = new TH1I("candid_r_evt"+name_charge,"candid_r_evt",1000,0,1000);
 	candid_r_evt->SetTitle("candid_r_evt - "+key+name_charge+"; # candidate road/evt; counts");
 
+	TH1F * ratio5_6 = new TH1F("ratio5_6"+name_charge,"ratio5_6",20,0,100);     //how many roads each event has 5 out of six matches
+	ratio5_6->SetTitle("ratio5_6 - "+key+name_charge+"; # ratio5_6/bx; counts");
 //	**********
 //	SET HISTOS (combination)
 //	**********
-	TH1F * combs_inf = new TH1F ("combs_inf"+name_charge,"",100,0,300);
-	combs_inf->SetTitle("combs_inf"+name_charge+";# combinations per road;# counts");
+	TH1F * combs_inf = new TH1F ("combs_inf"+name_charge,"",100,0,100);
+	combs_inf->SetTitle("combs_inf"+name_charge+";# combinations per road /bx;# counts");
+
+	TH1F * dup_combs_inf = new TH1F ("dup_combs_inf"+name_charge,"",100,0,100);
+	dup_combs_inf->SetTitle("dup_combs_inf"+name_charge+";# combinations per road /bx;# counts");
+	TH1F * fak_combs_inf = new TH1F ("fak_combs_inf"+name_charge,"",100,0,100);
+	fak_combs_inf->SetTitle("fak_combs_inf"+name_charge+";# combinations per road /bx;# counts");
 	Int_t n_stubs_for_combs;
 	Int_t combination_for_a_road;
 	Float_t average_combination_for_road=0;
@@ -151,6 +166,8 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	//inf, 200,400,800
 	Float_t tot_combs[4] = {0.,0.,0.,0.};
 	Float_t average_tot_combs[4] = {0.,0.,0.,0.};
+	Float_t tot_dup_combs[4]= {0.,0.,0.,0.};
+	Float_t tot_fak_combs[4]= {0.,0.,0.,0.};
 
 //	***********
 //	LOOP EVENTS
@@ -178,6 +195,8 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		is_evt_reconstr = false;
 		for(int r=0;r<4;r++){
 			tot_combs[r]=0;
+			tot_dup_combs[r]=0;
+			tot_fak_combs[r]=0;
 		}
 		average_candidate_roads_perevt=0;
 
@@ -230,8 +249,8 @@ void readtree_roads::Loop(TString key,Int_t charge)
 //		***********************
 
 		roads_before_reconstruction = 0;
-		int n_duplicates=0;
-		int n_fakes=0;
+		float n_road_duplicates=0;  //count how many good road with >=5 matchs there are for each event
+		float n_road_5=0; //count how many road with 5 matches there are for each event
 
 		n_roads_fired=AMTTRoads_patternRef->size();
 		road_fired->Fill(n_roads_fired);
@@ -251,12 +270,16 @@ void readtree_roads::Loop(TString key,Int_t charge)
 			setOflayers.erase(setOflayers.begin(),setOflayers.end());
 			combination_for_a_road=1;
 			roads_before_reconstruction++;
+			mapofn_stub.erase(mapofn_stub.begin(),mapofn_stub.end());
 
 			//LOOP OVER layers for each pattern
 			Int_t l=(*AMTTRoads_stubRefs)[patt_count].size();
 			assert(l==6);
 			for (l =0; l<6; ++l){
 
+				//initialize map of n_stub coming from mu and others in that layer
+				mapofn_stub[l]= make_pair(0,0);
+				
 				//LOOP OVER STUBS LIST for that layer, in that pattern, for that event.
 				n_stubs=(*AMTTRoads_stubRefs)[patt_count][l].size();
 				n_stubs_for_combs=n_stubs; //use another counter for combinations
@@ -270,27 +293,75 @@ void readtree_roads::Loop(TString key,Int_t charge)
 					trk_index=TTStubs_tpId->at(stub_index);
 
 //					if that trkpart is one of the "true" mu of the event, go ahead
-					if( setOfmu.find(trk_index)== setOfmu.end()) continue;
+					if( setOfmu.find(trk_index)== setOfmu.end()) {
+						mapofn_stub[l].second++;
+						continue;
+					}
 
-					layer_phi_zeta = phi_zeta(TTStubs_modId->at(stub_index)); //extract layer info //a[0] is the layer
-					insertYES = setOflayers.insert(layer_phi_zeta[0]);   //  do not overcount overlap;
+					else {
+						mapofn_stub[l].first++;
 
-					if(insertYES.second) {
-						genuine_mu++;
-						setOfmu[trk_index]++;
-						//for that particular mu-trk, count the number of stubs that leaves in the road
+						//layer_phi_zeta = phi_zeta(TTStubs_modId->at(stub_index)); //extract layer info //a[0] is the layer
+						insertYES = setOflayers.insert(l);   //  do not overcount overlap ONLY to see if the mu has been already counted, BUT count double combinations if present, because they go to fitter anyway;
+						if(insertYES.second) {
+							genuine_mu++;
+							setOfmu[trk_index]++;
+							//for that particular mu-trk, count the number of stubs that leaves in the road
+						}
 					}
 				}
 			}
 
-//			*********************************
-//			Count total combinations 'til now'
-//			**********************************
+//			*****duplicates*****
+			int n_zero_dup=0;
+			int n_zero_fak=0;
+			int n_dup_comb=1;
+			int n_fak_comb=1;
+
+			for(map<Int_t,pair<Int_t,Int_t> >::iterator it = mapofn_stub.begin() ; it!=mapofn_stub.end(); it++){
+				if(mapofn_stub[it->first].first == 0) {
+					n_zero_dup++;
+					continue;
+				}
+				else n_dup_comb=n_dup_comb*mapofn_stub[it->first].first;
+			}
+
+			//if there is more than 1 slot in the six thas hasn't got a muon (not specifiing trackindex) there are no duplicates
+			if (n_zero_dup > 1) {
+				n_dup_comb = 0;
+				n_fak_comb = combination_for_a_road;  // Are all fakes
+			}
+
+			else {
+				n_fak_comb = combination_for_a_road - n_dup_comb;
+			}
+
+
+//			cout << "combination per road_" << patt_count << " " << combination_for_a_road << endl;
+//			cout << "duplicate combination per that road " << n_dup_comb << endl;
+//			cout << "fake comb per taht road " << n_fak_comb << endl;
+			//			*********************************
+			//			Count total combinations 'til now'
+			//			**********************************
 			combs_inf->Fill(combination_for_a_road);
+			dup_combs_inf->Fill(n_dup_comb);
+			fak_combs_inf->Fill(n_fak_comb);
 			tot_combs[0]+=combination_for_a_road;
+			tot_dup_combs[0]+=n_dup_comb;
+			tot_fak_combs[0]+=n_fak_comb;
+
 			for(int r=0;r<3;r++){
-						if(patt_count<=trunc[r]) tot_combs[r+1]+=combination_for_a_road;
-					}
+				if(patt_count<=trunc[r]) {
+				tot_combs[r+1]+=combination_for_a_road;
+				tot_dup_combs[r+1]+=n_dup_comb;
+				tot_fak_combs[r+1]+=n_fak_comb;
+				}
+			}
+
+
+
+
+
 
 //			keep trace of how many roads I need to throw out AM to get a reconstruction candidate.
 
@@ -308,9 +379,10 @@ void readtree_roads::Loop(TString key,Int_t charge)
 
 				if (it->second>=5){
 					average_candidate_roads_perevt++;
-					n_duplicates++;
+					n_road_duplicates++;
 					ntuple_allinfo->Fill(jentry,it->first,patt_count); //fill ntuple with good event. info as road id.
 
+					if (it->second==5) n_road_5++;
 					alreadyRecognYES=setOfmu_recognized.insert(make_pair(it->first,true));
 					if(alreadyRecognYES.second) {
 						n_recognized_mu++; //decide if the mu has been already recognized (possible multiple good mu for event)
@@ -359,9 +431,13 @@ void readtree_roads::Loop(TString key,Int_t charge)
 //		**********************
 		for(int r=0;r<3;r++){
 			combs_evt[r]->Fill(tot_combs[r+1]);
+			dup_comb[r]->Fill(tot_dup_combs[r+1]);
+			fak_comb[r]->Fill(tot_fak_combs[r+1]);
+
 		}
 		candid_r_evt->Fill(average_candidate_roads_perevt);
 
+		ratio5_6->Fill(n_road_5/n_road_duplicates*100);
 
 	}
 
@@ -389,10 +465,14 @@ void readtree_roads::Loop(TString key,Int_t charge)
 
 
 //	Fill ntuple con final numbers combinations
-	Float_t r_eff[3],r_eff_errUp[3],r_eff_errDown[3], tcomb[3], tcombQ95[3];
+	Float_t r_eff[3],r_eff_errUp[3],r_eff_errDown[3], tcomb[3], tcombQ95[3], tdupcomb[3], tdupcombQ95[3], tfakcomb[3], tfakcombQ95[3];
 	for(int r=0;r<3;r++){
 		tcomb[r]=combs_evt[r]->GetMean();
 		tcombQ95[r] = quantile_single(combs_evt[r],0.95);
+		tdupcomb[r]=dup_comb[r]->GetMean();
+		tdupcombQ95[r]=quantile_single(dup_comb[r],0.95);
+		tfakcomb[r]=fak_comb[r]->GetMean();
+		tfakcombQ95[r]=quantile_single(fak_comb[r],0.95);
 		r_eff[r] = 	pt[r+2]->GetEntries()/pt[0]->GetEntries();
 		r_eff_errUp[r]   = 	e.ClopperPearson(pt[0]->GetEntries(),pt[r+2]->GetEntries(),0.683,true) -pt[r+2]->GetEntries()/pt[0]->GetEntries();
 		r_eff_errDown[r] = -e.ClopperPearson(pt[0]->GetEntries(),pt[r+2]->GetEntries(),0.683,false)+pt[r+2]->GetEntries()/pt[0]->GetEntries();
@@ -402,7 +482,8 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		raw_roads_combs->Fill(trunc[r],
 				average_roads_fired,quantile_single(road_fired,0.95),
 				average_roads_before_reconstruction[r+1],quantile_single(road_read_before_reconstruction[r+1],0.95),
-				tcomb[r],tcombQ95[r], r_eff[r], r_eff_errUp[r], r_eff_errDown[r]);
+				tcomb[r],tcombQ95[r], r_eff[r], r_eff_errUp[r], r_eff_errDown[r],
+				tdupcomb[r],tdupcombQ95[r], tfakcomb[r],tfakcombQ95[r]);
 	}
 
 	cout << endl;
@@ -430,8 +511,10 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	cout << "********************************************" << endl;
 	cout << "Results with road truncation" << endl;
 	cout << "********************************************" << endl;
+
+	cout.precision(5);
 	cout << setw(10) << "Bank name" <<
-	        setw(25) << "max roads" <<
+	        setw(45) << "max roads" <<
 			setw(10) << "<roads>" <<
 			setw(10) << "95%" <<
 	        setw(10) << "<#r bef 1st>" <<
@@ -440,7 +523,11 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	        setw(10) << "95%" <<
 			setw(12) << "muEffAll" <<
 			setw(10) << "+" <<
-			setw(10) << "-" <<'\n';
+			setw(10) << "-" <<
+			setw(10) << "<dup_combs>" <<
+			setw(10) << "95%" <<
+			setw(10) << "<fak_combs>" <<
+			setw(10) << "95%" <<'\n';
 	for(int r=0;r<3;r++){
 		cout << setw(10) << key <<
 					setw(10) << trunc[r] <<
@@ -452,7 +539,11 @@ void readtree_roads::Loop(TString key,Int_t charge)
 					setw(10) << tcombQ95[r] <<
 					setw(10) << r_eff[r]<<
 					setw(10) << r_eff_errUp[r]<<
-					setw(10) << r_eff_errDown[r]<<'\n';
+					setw(10) << r_eff_errDown[r]<<
+					setw(10) << tdupcomb[r] <<
+					setw(10) << tdupcombQ95[r] <<
+					setw(10) << tfakcomb[r] <<
+					setw(10) << tfakcombQ95[r] <<'\n';
 	}
 
 //	*************************
@@ -464,20 +555,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		efficiency_turnon(eta[r+1],eta[0],eff_eta[r],"eff_eta"+namehisto[r+1]+name_charge,"eta",key);
 		efficiency_turnon(pt[r+1],pt[0],eff_pt[r],"eff_pT"+namehisto[r+1]+name_charge,"pT",key);
 	}
-//	efficiency_turnon(phi[1],phi[0],eff_phi[0],"eff_phi_inf"+name_charge,"phi",key); //eff phi inf
-//	efficiency_turnon(phi[2],phi[0],eff_phi[1],"eff_phi_200"+name_charge,"phi",key);
-//	efficiency_turnon(phi[3],phi[0],eff_phi[2],"eff_phi_400"+name_charge,"phi",key);
-//	efficiency_turnon(phi[4],phi[0],eff_phi[3],"eff_phi_800"+name_charge,"phi",key);
-//
-//	efficiency_turnon(eta[1],eta[0],eff_eta[0],"eff_eta_inf"+name_charge,"eta",key); //eff eta inf
-//	efficiency_turnon(eta[2],eta[0],eff_eta[1],"eff_eta_200"+name_charge,"eta",key);
-//	efficiency_turnon(eta[3],eta[0],eff_eta[2],"eff_eta_400"+name_charge,"eta",key);
-//	efficiency_turnon(eta[4],eta[0],eff_eta[3],"eff_eta_800"+name_charge,"eta",key);
-//
-//	efficiency_turnon(pt[1],pt[0],eff_pt[0],"eff_pt_inf"+name_charge,"pT",key); //eff pt inf
-//	efficiency_turnon(pt[2],pt[0],eff_pt[1],"eff_pt_200"+name_charge,"pT",key);
-//	efficiency_turnon(pt[3],pt[0],eff_pt[2],"eff_pt_400"+name_charge,"pT",key);
-//	efficiency_turnon(pt[4],pt[0],eff_pt[3],"eff_pt_800"+name_charge,"pT",key);
 
 //	**********
 //	DRAW PLOTS
@@ -492,31 +569,46 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	draw_efficiencies_final(eff_eta[1],eff_eta[2],eff_eta[3],eff_eta[0],c_eff_eta,key);
 
 //	Combinations
-	TCanvas * c_combs_per_road = new TCanvas("c_combs_per_road"+name_charge);
-	draw_single_histo(combs_inf, "combs per road (no truncation)", c_combs_per_road,key+name_charge);
+	TCanvas * c_combs_per_road = new TCanvas("c_combs_fak_dup__per_road"+name_charge);
+	draw_combs_fak_dup_inf(combs_inf,dup_combs_inf,fak_combs_inf,c_combs_per_road);
+
 
 	TCanvas * c_combs_roadlimit = new TCanvas("c_combs_roadlimit"+name_charge);
-	draw_combs_road(combs_evt[0],combs_evt[1],combs_evt[2],c_combs_roadlimit,key+name_charge,3);
+	draw_combs_road(combs_evt[0],combs_evt[1],combs_evt[2],c_combs_roadlimit,"combs with road trunc",3);
+
+	TCanvas * c_dup_combs_roadlimit = new TCanvas("c_dup_combs_roadlimit"+name_charge);
+	draw_combs_road(dup_comb[0],dup_comb[1],dup_comb[2],c_dup_combs_roadlimit,"duplicates",3);
+
+	TCanvas * c_fak_combs_roadlimit = new TCanvas("c_fak_combs_roadlimit"+name_charge);
+	draw_combs_road(fak_comb[0],fak_comb[1],fak_comb[2],c_fak_combs_roadlimit,"fake",3);
+
 
 	TCanvas * c_road = new TCanvas("c_road"+name_charge);
-	draw_single_histo(road_read_before_reconstruction[0],"#roads read before reconstruction @ infinte trunc "+key+name_charge,c_road);
+	draw_single_histo(road_read_before_reconstruction[0],"#roads read before reconstruction @ infinte trunc ",c_road);
 	c_road -> Write();	
 
 	TCanvas * c_road_fired = new TCanvas("c_road_fired"+name_charge);
 	draw_single_histo(road_fired,"#roads fired "+key+name_charge,c_road_fired);
+
+	TCanvas * c_ratio56 = new TCanvas("ratio56"+name_charge);
+	draw_single_histo(ratio5_6,"ratio roads@5matches / good roads /bx", c_ratio56);
 
 //      Save Canvases
         c_eff_pt ->  Write();
         c_eff_eta -> Write();
         c_eff_phi -> Write();
         c_combs_roadlimit -> Write();
+        c_dup_combs_roadlimit->Write();
+        c_fak_combs_roadlimit->Write();
+        c_combs_per_road -> Write();
+        c_ratio56->Write();
 }
 
 //      **********************
 //               MAIN (root -l ---> .x macro.C("roads_sdsdsdsds")
 //      **********************
 
-void readtree_roads_efficiency_turnon_full_ext_248_allroads_41(TString name = "0", TString key = "0",Int_t charge=1){
+void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name = "0", TString key = "0",Int_t charge=1){
 
 	gStyle->SetOptStat(111111);
 	gROOT->SetBatch(kTRUE);
@@ -545,13 +637,13 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41(TString name = "0
 
 
 	cout << "______________________________" << endl;
-	cout << "FILE OUTPUT: " << name+"_efficiency_248.root" << endl;
+	cout << "FILE OUTPUT: " << name+"_efficiency_248_dup.root" << endl;
 
 //	HERE I DEFINE OUTPUT .ROOT WITH THE HISTOGRAMS TO CHECK
 
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
-	f = new TFile("../roads/TT41/"+name+"_efficiency_248.root","RECREATE");
+	f = new TFile("../roads/TT41/"+name+"_efficiency_248_dup.root","RECREATE");
 	isfOpen = f->IsOpen();
 	if (!isfOpen) {
 		cout << "ERROR. Not able to load the output file. Exiting..." << endl;

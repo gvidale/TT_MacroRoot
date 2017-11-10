@@ -29,8 +29,8 @@ void readtree_std_deltaphi() {
 	TChain *chain = new TChain("/ntupler/tree");
 
 	char namefile[200][200];
-	for(Int_t i= 1; i < 100; ++i){
-		sprintf(namefile[i],"root://cmseos.fnal.gov//store/group/l1upgrades/SLHC/GEN/920/SingleMu/TT41/ParticleGuns/CRAB3/170816_000834/0000/PGun_TT41_pt3_Tilted_ntuple_%0i.root",i);
+	for(Int_t i= 50; i <80; ++i){
+		sprintf(namefile[i],"root://cmsxrootd.fnal.gov//store/group/l1upgrades/SLHC/GEN/920/SingleMu/TT41/ParticleGuns/CRAB3/170823_002349/0000/PGun_TT41_pt3_Tilted_ntuple_%0i.root",i);
 		//	   cout << name[i] <<endl;
 		chain -> Add(namefile[i]);
 	}
@@ -50,6 +50,8 @@ void readtree_std_deltaphi() {
 	TTreeReaderValue<vector <Float_t> > genParts_phi(myReader, "genParts_phi");
 	TTreeReaderValue<vector <Float_t> > genParts_vz(myReader, "genParts_vz");
 	TTreeReaderValue<vector <Float_t> > genParts_eta(myReader, "genParts_eta");
+	TTreeReaderValue<vector <bool> > TTStubs_isps(myReader, "TTStubs_psmodule");
+
 	gStyle->SetOptStat(0);
 
 	TH1F * d_phi_ps[16];
@@ -61,12 +63,16 @@ void readtree_std_deltaphi() {
 		sprintf(name,"deltpahi_ps_lay%1i",t);
 		d_phi_ps[t]=new TH1F(name,name,1000,-0.02,0.02);
 		d_phi_ps[t]->SetLineColor(kBlue);
-		d_phi_r_ps[t]=new TH2F(TString(name)+"_r",TString(name)+"_r",1000,-0.02,0.02,100,17,120);
+		sprintf(name,"deltpahi_ps_lay_R%1i",t);
+		d_phi_r_ps[t]=new TH2F(name,name,1000,-0.02,0.02,100,17,120);
 		d_phi_r_ps[t]->SetMarkerColor(kBlue);
+		d_phi_r_ps[t]->SetTitle("deltaphi_r_lay;phi [rad]; r [cm]");
 		sprintf(name,"deltpahi_ss_lay%1i",t);
 		d_phi_ss[t]=new TH1F(name,name,1000,-0.02,0.02);
 		d_phi_ss[t]->SetLineColor(kRed);
-		d_phi_r_ss[t]=new TH2F(TString(name)+"_r",TString(name)+"_r",1000,-0.02,0.02,100,17,120);
+		sprintf(name,"deltpahi_ss_lay_r%1i",t);
+		d_phi_r_ss[t]=new TH2F(name,name,1000,-0.02,0.02,100,17,120);
+		d_phi_r_ss[t]->SetTitle("deltaphi_r_lay;phi [rad]; r [cm]");
 		d_phi_r_ss[t]->SetMarkerColor(kRed);
 	}
 
@@ -93,7 +99,7 @@ void readtree_std_deltaphi() {
 			lay=TTStubs_modId->at(i)/10000;
 
 
-			if(TTStubs_r->at(i)<64.3) {
+			if(TTStubs_isps->at(i)) {
 				d_phi_ps[lay-5]->Fill(deltaphi);
 				d_phi_r_ps[lay-5]->Fill(deltaphi,TTStubs_r->at(i));
 			}
@@ -165,9 +171,10 @@ void readtree_std_deltaphi() {
 
 		//			c->cd(f-5+5);
 		//			t[f]->Draw();
-		//			d->cd(f-5);
-		//			d_phi_r_ps[f]->Draw();
-		//			d_phi_r_ss[f]->Draw("same");
+					d->cd(f-5);
+					d->SetGridx();
+					d_phi_r_ps[f]->Draw();
+					d_phi_r_ss[f]->Draw("same");
 
 
 	}

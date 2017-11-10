@@ -116,12 +116,15 @@ void draw_efficiencies_final(TEfficiency * e200,TEfficiency * e400,TEfficiency *
 	c_eff->cd();
 	c_eff->SetGridx();
 	c_eff->SetGridy();
-	e200->SetLineColor(kBlue);
-	if(counter >= 1)					e200->Draw();
-	e400->SetLineColor(kRed);
-	if(counter >= 2)					e400->Draw("same");
 	e800->SetLineColor(kBlack);
-	if(counter >= 3)					e800->Draw("same");
+	e800->Draw();
+
+	e400->SetLineColor(kRed);
+	e400->Draw("same");
+
+	e200->SetLineColor(kBlue);
+	e200->Draw("same");
+
 	einf->SetLineColor(kGreen);
 	if(counter >= 4 )	einf->Draw("same");
 
@@ -176,7 +179,49 @@ void draw_combs_road(TH1F * c200,TH1F * c400, TH1F * c800,TCanvas * c, TString k
 
 }
 
+void draw_combs_fak_dup_inf(TH1F * cinf,TH1F * dupinf, TH1F * fakinf,TCanvas * c, TString key=""){
+	c->cd();
+	c->SetGridx();
+	c->SetGridy();
+	c->SetLogx();
+	c->SetLogy();
 
+	Double_t xq[2]={0.95,0.99};
+	Double_t yq[2];
+	cinf->SetTitle("comb_perroad/bx "+key); //titolo complessivo della canvas
+	cinf->SetLineColor(kBlack);
+	cinf->SetFillStyle(3002);
+	cinf->SetFillColor(kBlack);
+	dupinf->SetLineColor(kBlue);
+	dupinf->SetFillStyle(3002);
+	dupinf->SetFillColor(kBlue);
+	fakinf->SetLineColor(kRed);
+	fakinf->SetFillStyle(3002);
+	fakinf->SetFillColor(kRed);
+	cinf->Draw("");
+	dupinf->Draw("same");
+	fakinf->Draw("same");
+
+	TLegend * legend = new TLegend(0.4,0.65, 0.9,0.9);
+	char c_legend[100];
+
+	cinf->GetQuantiles(2,yq,xq);
+	sprintf(c_legend,", road_combs/bx, mu=%4.0f, q95=%4.0f",cinf->GetMean(),yq[0]);
+	legend->AddEntry(cinf,key+TString(c_legend));
+
+
+	dupinf->GetQuantiles(2,yq,xq);
+	sprintf(c_legend,", road_duplicate_combs/bx, mu=%4.0f, q95=%4.0f",dupinf->GetMean(),yq[0]);
+	legend->AddEntry(dupinf,key+TString(c_legend));
+
+
+	fakinf->GetQuantiles(2,yq,xq);
+	sprintf(c_legend,", road_fake_combs/bx, mu=%4.0f, q95=%4.0f",fakinf->GetMean(),yq[0]);
+	legend->AddEntry(fakinf,key+TString(c_legend));
+
+	legend->Draw();
+
+}
 
 void draw_single_histo(TH1 * h, TString name_legend, TCanvas *c,TString key = "", Color_t color = kBlue){ //Tcolor optional
 	gStyle->SetOptStat(0);
@@ -184,17 +229,18 @@ void draw_single_histo(TH1 * h, TString name_legend, TCanvas *c,TString key = ""
 	c->SetGridx();
 	c->SetGridy();
 	char c_legend[100];
+
 	sprintf(c_legend,", mu=%4.0f, q95=%4.0f",h->GetMean(),quantile_single(h,0.95));
 	TLegend * legend = new TLegend(0.4,0.65, 0.9,0.9);
-	TPaveText * text = new TPaveText(0.4,0.4, 0.9,0.65);
-	legend->AddEntry(h,name_legend);
-	text->AddText(c_legend);
+//	TPaveText * text = new TPaveText(0.4,0.4, 0.9,0.65);
+	legend->AddEntry(h,name_legend+TString(c_legend));
+//	text->AddText(c_legend);
 
 
 	h->SetLineColor(color);
 	h->Draw("same");
 	legend->Draw();
-	text->Draw();
+//	text->Draw();
 
 }
 #endif /* MYMACRO_FUNCTIONS_H_ */

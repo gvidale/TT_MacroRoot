@@ -82,12 +82,22 @@ readtree_TT::readtree_TT(TString fName) : fChain(0)
 // used to generate this class and read the Tree.
 
 	//   if (tree == 0) {
-	TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject(fName);
-	if (!f || !f->IsOpen()) {
-		f = new TFile(fName);
-	}
-	TDirectory * dir = (TDirectory*)f->Get(fName+TString(":/ntupler"));
-	dir->GetObject("tree",tree);
+//	TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject(fName);
+//	if (!f || !f->IsOpen()) {
+//		f = new TFile(fName);
+//	}
+std::cout << "trying to open input " << std::endl;	
+	TFile *f = TFile::Open(fName);
+           if (f->IsZombie()) {
+                   cout << "ERROR. Not able to load the input file. Exiting..." << endl;
+                   return;
+           }
+
+
+//	TDirectory * dir = (TDirectory*)f->Get(fName+TString(":/ntupler"));
+//	dir->GetObject("tree",tree);
+
+	f->GetObject("/ntupler/tree",tree);
 	std::cout << "Initializing " << fName.Data() <<  std::endl;
 	//   }
 	Init(tree);
