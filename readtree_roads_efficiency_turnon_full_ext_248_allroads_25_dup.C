@@ -91,17 +91,19 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	Float_t xbins[18]={2,3,4,5,6,7,8,9,10,20,30,40,50,70,90,110,150,200}; //18 here -> nbins = xbins size -1 = 17
 	TH1F * phi[5]; TH1F * eta[5]; TH1F * pt[5];
 	TEfficiency *eff_phi[4]; TEfficiency * eff_eta[4]; TEfficiency * eff_pt[4]; TH1I * road_read_before_reconstruction[4];
+	
+	TString name_charge;
+        (select_charge==1)? name_charge = "_ch1" : (select_charge==-1)? name_charge="_ch-1" : name_charge = "_chALL";
 
-	TH1F * duplicate = new TH1F("duplicate", "duplicate"+key, 100,0, 100);
+	TH1F * duplicate = new TH1F("duplicate"+name_charge, "duplicate"+key, 100,0, 100);
 	duplicate -> SetTitle("ratio duplicates/roads_fired "+ key+";ratio duplicates/fired; frequency");
-	TH1F * fakes = new TH1F("fakes", "fakes"+key, 100,0, 100);
+	TH1F * fakes = new TH1F("fakes"+name_charge, "fakes"+key, 100,0, 100);
 	fakes -> SetTitle("ratio fakes/roads_fired "+ key+";ratio fakes/fired; frequency");
 
 	TH1F * combs_evt[3]; TH1F * dup_comb[3]; TH1F * fak_comb[3];
 	const int trunc[3]={200,400,800};
 	TString namehisto[5] = {"_denominator","_infroads","_200","_400","_800"};
-	TString name_charge;
-	(select_charge==1)? name_charge = "_ch1" : (select_charge==-1)? name_charge="_ch-1" : name_charge = "_chALL";
+	
 	char name[100];
 
 	//41 eta 1.2 2.4; 25 eta -0.5 1.5

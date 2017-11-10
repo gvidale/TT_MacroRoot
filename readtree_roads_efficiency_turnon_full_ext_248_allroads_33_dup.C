@@ -475,8 +475,8 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		tfakcomb[r]=fak_comb[r]->GetMean();
 		tfakcombQ95[r]=quantile_single(fak_comb[r],0.95);
 		r_eff[r] = 	pt[r+2]->GetEntries()/pt[0]->GetEntries();
-		r_eff_errUp[r]   = 	e.ClopperPearson(pt[0]->GetEntries(),pt[r+2]->GetEntries(),0.90,true) -pt[r+2]->GetEntries()/pt[0]->GetEntries();
-		r_eff_errDown[r] = -e.ClopperPearson(pt[0]->GetEntries(),pt[r+2]->GetEntries(),0.90,false)+pt[r+2]->GetEntries()/pt[0]->GetEntries();
+		r_eff_errUp[r]   = 	e.ClopperPearson(pt[0]->GetEntries(),pt[r+2]->GetEntries(),0.683,true) -pt[r+2]->GetEntries()/pt[0]->GetEntries();
+		r_eff_errDown[r] = -e.ClopperPearson(pt[0]->GetEntries(),pt[r+2]->GetEntries(),0.683,false)+pt[r+2]->GetEntries()/pt[0]->GetEntries();
 	}
 
 	for(int r=0;r<3;r++){
