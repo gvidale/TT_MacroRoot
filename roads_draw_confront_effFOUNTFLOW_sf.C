@@ -31,8 +31,8 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 
 
 	string line;
-	ifstream  myfilefount;
-	ifstream myfileflow;
+	ifstream  myfilefount(file_list_fount);
+	ifstream myfileflow(file_list_flower);
 
 	ifstream * myfile[0];
 	myfile[0] = & myfilefount;
