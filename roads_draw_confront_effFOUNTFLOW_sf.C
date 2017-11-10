@@ -114,7 +114,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 	TFile *f_input[size];
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
-//		cout << fName[i][0]<<endl;
+		cout << fName[i][0]<<endl;
 		f_input[i] = new TFile(TString(fName[i][0]));
 		if (f_input[i]->IsZombie()) {
 			cout << "ERROR. Not able to load the input ntuple file. Exiting..." << endl;
