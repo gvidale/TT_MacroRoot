@@ -14,7 +14,7 @@
 #include "functions.h"
 #include <TEfficiency.h>
 #include <TLegend.h>
-#include <TGraph.h>
+#include <TGraphErrors.h>
 #include <TMultiGraph.h>
 #include <fstream>
 #include <string>
@@ -100,7 +100,7 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 
 
 	TNtuple * eff[size];
-	TGraph * gr[size];
+	TGraphErrors * gr[size];
 	TCanvas * confront_eff = new TCanvas();
 	TLegend * legend = new TLegend(0.4,0.3, 0.8,0.5);
 	TMultiGraph *mg = new TMultiGraph();
@@ -126,8 +126,8 @@ void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_lis
 		eff_name1 = "barr_sf "+TString(fName[i][1])+" | disks_sf "+TString(fName[i][2]);
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
 //		eff[i]->SetName(eff_name);
-		eff[i]->Draw("road_eff:road_truncation","","goff"); //what leafs to plot
-		gr[i]= new TGraph(eff[i]->GetSelectedRows(), eff[i]->GetV2(), eff[i]->GetV1());
+		eff[i]->Draw("road_eff:road_truncation:errUp","","goff"); //what leafs to plot
+		gr[i]= new TGraphErrors(eff[i]->GetSelectedRows(), eff[i]->GetV2(), eff[i]->GetV1(),eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(2);
 		gr[i]->SetFillStyle(0);
