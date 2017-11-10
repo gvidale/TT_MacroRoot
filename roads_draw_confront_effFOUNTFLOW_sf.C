@@ -1,5 +1,5 @@
 /*
- * roads_draw_confront_eff248__sf.C
+ * roads_draw_confront_effFOUNTFLOWsf.C
  *
  *  Created on: Aug 6, 2017
  *      Author: gvidale
@@ -22,7 +22,7 @@
 
 using namespace std;
 
-void roads_draw_confront_eff248__sf(string file_list){
+void roads_draw_confront_effFOUNTFLOW_sf(string file_list_fount, string file_list_flower){
 
 	typedef boost::tokenizer<boost::char_separator<char> > Tokenizer; //Class
 	boost::char_separator<char> sep("_");// default constructed. can give full path of my home. there are 3 _ before true path starts.
@@ -31,13 +31,19 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 
 	string line;
-	ifstream myfile (file_list);
+	ifstream  myfilefount;
+	ifstream myfileflow;
+
+	ifstream * myfile[0];
+	myfile[0] = & myfilefount;
+	myfile[1] = & myfileflow;
+
 	std::string string_toparse;
 	std::vector<TString> token;
-	if (myfile.is_open())
+	if (myfile[0].is_open())
 	{
 		cout << "reading files..." << endl;
-		while ( getline(myfile,line) )
+		while ( getline(myfile[0],line) )
 		{
 			cout << line << '\n';
 			string_toparse = line;
@@ -55,7 +61,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 			fName.push_back(name_sf); //si piglia il puntatore al primo elemento della coppia
 		}
-		myfile.close();
+		myfile[0].close();
 	}
 	else cout << "Unable to open file";
 
