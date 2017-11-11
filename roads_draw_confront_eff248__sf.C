@@ -70,7 +70,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 	Double_t * sf = new Double_t[size];
 	string::size_type sz;
-
+	char a[5], b[5];
 	TNtuple * eff[size];
 	TGraphErrors * gr[size];
 	TCanvas * confront_eff = new TCanvas();
@@ -81,6 +81,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 	confront_eff->SetGridx();
 	confront_eff->SetGridy();
 
+
+
 //	*****************************************************************
 //	LOAD INPUT _efficiency.root  with all the info u need
 //	*****************************************************************
@@ -88,7 +90,12 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
-		string pino = token[7].Data();
+		sprintf(a, token[7].Data());
+		for(int g=2 ; g< 5; ++g){
+			b[g-2]=a[g];
+		}
+
+		string pino = b;
 		sf[i]=stod(pino,&sz);
 
 		f_input[i] = new TFile(TString(fName[i][0]));
