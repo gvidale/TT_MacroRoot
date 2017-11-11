@@ -122,15 +122,15 @@ void roads_draw_confront_eff248__sf(string file_list){
 		gr[i]= new TGraphErrors(size, sf, eff[i]->GetV1(), 0,eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(0.8);
-		gr[i]->SetMarkerColor(i+1);
-		gr[i]->SetLineColor(i+1); //0 is white
+//		gr[i]->SetMarkerColor(i+1);
+//		gr[i]->SetLineColor(i+1); //0 is white
 //		gr[i]->SetTitle(eff_name);
 		gr[i]->SetFillStyle(0);
 		mg->Add(gr[i],"");
 		legend->AddEntry(gr[i],"#splitline{"+eff_name1+"}{"+eff_name2+"}");
 	}
 
-	mg->Draw("apl");
+	mg->Draw("ap");
 
 	//legend->Draw();
 
