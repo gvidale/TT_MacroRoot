@@ -91,7 +91,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
 //		sprintf(a, token[7].Data());
-		strcpy(a, token[7].c_str());
+		strncpy(a, token[7].c_str(),sizeof(a));
+		a[sizeof(a) - 1] = 0;
 		for(int g=2 ; g< 5; ++g){
 			b[g-2]=a[g];
 		}
