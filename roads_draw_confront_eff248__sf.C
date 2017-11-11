@@ -100,7 +100,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 		string pino(b);
 		cout << pino << endl;
-		sf[i]=stod(token[7],&sz);
+		sf[i]=stod(pino,&sz);
 		cout <<sf[i] <<endl;
 
 		f_input[i] = new TFile(TString(fName[i][0]));
