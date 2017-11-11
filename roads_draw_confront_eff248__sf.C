@@ -33,7 +33,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 	string line;
 	ifstream myfile (file_list);
 	std::string string_toparse;
-	std::vector<TString> token;
+	std::vector<string> token;
 	if (myfile.is_open())
 	{
 		cout << "reading files..." << endl;
@@ -90,13 +90,13 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
-		sprintf(a, token[7].Data());
-		for(int g=2 ; g< 5; ++g){
-			b[g-2]=a[g];
-		}
+//		sprintf(a, token[7].Data());
+//		for(int g=2 ; g< 5; ++g){
+//			b[g-2]=a[g];
+//		}
 
-		string pino = b;
-		sf[i]=stod(pino,&sz);
+//		string pino(b);
+		sf[i]=stod(token[7],&sz);
 
 		f_input[i] = new TFile(TString(fName[i][0]));
 		if (f_input[i]->IsZombie()) {
