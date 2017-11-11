@@ -68,7 +68,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 
 	Int_t size = fName.size();
 
-
+	int * sf = new int[size];
 
 	TNtuple * eff[size];
 	TGraphErrors * gr[size];
@@ -87,6 +87,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
+		sf[i]=stoi(token[7].Data());
+
 		f_input[i] = new TFile(TString(fName[i][0]));
 		if (f_input[i]->IsZombie()) {
 			cout << "ERROR. Not able to load the input ntuple file. Exiting..." << endl;
@@ -97,8 +99,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 		eff_name1 = "barr_sf "+TString(fName[i][1])+" | disks_sf "+TString(fName[i][2]);
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
 //		eff[i]->SetName(eff_name);
-		eff[i]->Draw("road_eff:road_truncation:errUp","","goff"); //what leafs to plot
-		gr[i]= new TGraphErrors(eff[i]->GetEntries(), eff[i]->GetV2(), eff[i]->GetV1(), 0,eff[i]->GetV3());
+		eff[i]->Draw("road_eff[1]:road_truncation[2]:errUp[3]","","goff"); //what leafs to plot
+		gr[i]= new TGraphErrors(size, sf, eff[i]->GetV2(), 0,eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(0.8);
 		gr[i]->SetMarkerColor(i+1);
