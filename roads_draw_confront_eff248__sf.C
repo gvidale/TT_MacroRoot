@@ -77,7 +77,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TCanvas * confront_eff = new TCanvas();
 	TLegend * legend = new TLegend(0.4,0.3, 0.8,0.5);
 	TMultiGraph *mg = new TMultiGraph();
-	mg->SetTitle("road eff "+TString(name_sf[3])+" "+TString(name_sf[4])+"; # road truncation; efficiency");
+	mg->SetTitle("road eff "+TString(name_sf[3])+" "+TString(name_sf[4])+"; scaling factor; road efficiency [%]");
 
 	confront_eff->SetGridx();
 	confront_eff->SetGridy();
@@ -93,7 +93,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 //		cout << fName[i][0]<<endl;
 //		sprintf(a, token[7].Data());
 //		cout << fName[i][2] << endl;
-		if(fName[i][5] == "TT41" ||fName[i][5] == "TT25" ){
+		if(fName[i][5] == "TT33" ||fName[i][5] == "TT25" ){
 		strncpy(a, fName[i][1].c_str(),sizeof(a));
 		}
 		else strncpy(a, fName[i][2].c_str(),sizeof(a));
@@ -118,8 +118,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 		eff_name1 = "barr_sf "+TString(fName[i][1])+" | disks_sf "+TString(fName[i][2]);
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
 //		eff[i]->SetName(eff_name);
-		eff[i]->Draw("road_eff[1]:road_truncation[2]:errUp[3]","","goff"); //what leafs to plot
-		gr[i]= new TGraphErrors(size, sf, eff[i]->GetV2(), 0,eff[i]->GetV3());
+		eff[i]->Draw("road_eff[1]:road_truncation[1]:errUp[1]","","goff"); //what leafs to plot
+		gr[i]= new TGraphErrors(size, sf, eff[i]->GetV1(), 0,eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(0.8);
 		gr[i]->SetMarkerColor(i+1);
