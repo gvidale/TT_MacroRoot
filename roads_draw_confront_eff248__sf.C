@@ -69,6 +69,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 	Int_t size = fName.size();
 
 	Double_t * sf = new Double_t[size];
+	string::size_type sz;
 
 	TNtuple * eff[size];
 	TGraphErrors * gr[size];
@@ -87,7 +88,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
-		sf[i]=stod(token[7].Data());
+		string pino = token[7].Data();
+		sf[i]=stod(pino,&sz);
 
 		f_input[i] = new TFile(TString(fName[i][0]));
 		if (f_input[i]->IsZombie()) {
