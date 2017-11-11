@@ -87,7 +87,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 	TString eff_name1, eff_name2;
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
-		sf[i]=double(stoi(token[7].Data()));
+		sf[i]=stod(token[7].Data());
 
 		f_input[i] = new TFile(TString(fName[i][0]));
 		if (f_input[i]->IsZombie()) {
