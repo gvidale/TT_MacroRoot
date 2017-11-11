@@ -27,7 +27,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 	typedef boost::tokenizer<boost::char_separator<char> > Tokenizer; //Class
 	boost::char_separator<char> sep("_");// default constructed. can give full path of my home. there are 3 _ before true path starts.
 	vector < vector<string> > fName;
-	vector <string> name_sf(5,"");
+	vector <string> name_sf(6,"");
 
 
 	string line;
@@ -52,6 +52,7 @@ void roads_draw_confront_eff248__sf(string file_list){
 			name_sf[2]=token[7];//sf_disks
 			name_sf[3]=token[5];//type ss
 			name_sf[4]=token[10];//AM size
+			name_sf[5]=token[3]; //tower
 
 			fName.push_back(name_sf); //si piglia il puntatore al primo elemento della coppia
 		}
@@ -91,17 +92,21 @@ void roads_draw_confront_eff248__sf(string file_list){
 	for(Int_t i=0; i<size; i++){
 //		cout << fName[i][0]<<endl;
 //		sprintf(a, token[7].Data());
-		strncpy(a, fName[i][2].c_str(),sizeof(a));
+//		cout << fName[i][2] << endl;
+		if(fName[i][5] == "TT41" ||fName[i][5] == "TT25" ){
+		strncpy(a, fName[i][1].c_str(),sizeof(a));
+		}
+		else strncpy(a, fName[i][2].c_str(),sizeof(a));
 		a[sizeof(a) - 1] = 0;
-		cout << a <<endl;
+//		cout << a <<endl;
 		for(int g=2 ; g< 5; ++g){
 			b[g-2]=a[g];
 		}
 
 		string pino(b);
-		cout << pino << endl;
+//		cout << pino << endl;
 		sf[i]=stod(pino,&sz);
-		cout <<sf[i] <<endl;
+//		cout <<sf[i] <<endl;
 
 		f_input[i] = new TFile(TString(fName[i][0]));
 		if (f_input[i]->IsZombie()) {
