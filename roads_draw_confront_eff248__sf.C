@@ -118,8 +118,8 @@ void roads_draw_confront_eff248__sf(string file_list){
 		eff_name1 = "barr_sf "+TString(fName[i][1])+" | disks_sf "+TString(fName[i][2]);
 		eff_name2 = "type "+TString(fName[i][3])+" | AM "+TString(fName[i][4]);
 //		eff[i]->SetName(eff_name);
-		eff[i]->Draw("road_eff[1]:road_truncation[1]:errUp[1]","","goff"); //what leafs to plot
-		gr[i]= new TGraphErrors(size, sf, eff[i]->GetV1(), 0,eff[i]->GetV3());
+		eff[i]->Draw("road_eff:road_truncation:errUp","","goff"); //what leafs to plot
+		gr[i]= new TGraphErrors(eff[i]->GetEntries(), sf[i], eff[i]->GetV1(), 0,eff[i]->GetV3());
 		gr[i]->SetMarkerStyle(21);
 		gr[i]->SetMarkerSize(0.8);
 //		gr[i]->SetMarkerColor(i+1);
