@@ -25,7 +25,7 @@ void read_patternBank::Loop(TString key)
 
 
 
-	TH1F * coverage= new TH1F("coverage","coverage", total_patterns,0,total_patterns);
+	TH1F * coverage= new TH1F("coverage"+key,"coverage"+key, total_patterns,0,total_patterns);
 	coverage->SetTitle(";patternID;CumulativeCoverage");
 
 	cout << "pino" << endl;
