@@ -78,7 +78,7 @@ void read_patternBank_coverage(){
 				"TT33_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
 				"TT33_muPU200_fount_sf1_sf1_100_2610_bank",
 				"TT33_muPU200_fount_sf07_sf1_100_2610_bank",
-				"TT33_muPU200_flowonly_sf07_sf07_pt08_100_2610_bank"};
+				"TT33_muPU200_flowonly_sf07_sf1_pt08_100_2610_bank"};
 
 //	fName = "../patternBank/"+name+".root"; //name of file root to read, with path
 //	key = "_"+name;     //just a key for histos
