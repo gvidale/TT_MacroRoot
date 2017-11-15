@@ -98,7 +98,7 @@ void read_patternBank_coverage(){
 
 	for(int r=0; r< size; r++){
 		key = "_"+name[r];     //just a key for histos
-		read_patternBank a("root://cmsxrootd.fnal.gov//store/user/gvidale/TT41/"+name[r]+".root");
+		read_patternBank a("root://cmsxrootd.fnal.gov//store/user/gvidale/TT33/"+name[r]+".root");
 		f->cd();
 		a.Loop(key);
 		}
