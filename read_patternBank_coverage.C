@@ -20,7 +20,7 @@ void read_patternBank::Loop(TString key)
 	Long64_t total_events = 17165497;
 	Int_t event_count=0;
 	Int_t pattern_count=0;
-	Float_t cover;
+	Float_t cover=0;
 
 
 
@@ -74,7 +74,7 @@ void read_patternBank_coverage(){
 			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
 			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
 			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank"};
-
+=0
 //	fName = "../patternBank/"+name+".root"; //name of file root to read, with path
 //	key = "_"+name;     //just a key for histos
 
