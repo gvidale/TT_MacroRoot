@@ -70,10 +70,15 @@ void read_patternBank_coverage(){
 	const int size = 4;
 	TString name[size] ={
 //			"root://cmseos.fnal.gov//store/user/gvidale/TT25/TT25_muPU200_fount_sf1_sf1_50_2610_bank",
-			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
-			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
-			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
-			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank"};
+//			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
+//			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
+//			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
+//			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank"};
+//
+				"TT33_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
+				"TT33_muPU200_fount_sf1_sf1_100_2610_bank",
+				"TT33_muPU200_fount_sf1_sf07_100_2610_bank",
+				"TT33_muPU200_flowonly_sf1_sf07_pt08_100_2610_bank"};
 
 //	fName = "../patternBank/"+name+".root"; //name of file root to read, with path
 //	key = "_"+name;     //just a key for histos
@@ -83,7 +88,7 @@ void read_patternBank_coverage(){
 
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
-	f = new TFile("TT41_coverage.root","RECREATE");
+	f = new TFile("TT33_coverage.root","RECREATE");
 	isfOpen = f->IsOpen();
 	if (!isfOpen) {
 		cout << "ERROR. Not able to load the confrontoBranches file. Exiting..." << endl;
