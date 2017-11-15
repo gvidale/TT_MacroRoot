@@ -35,13 +35,10 @@ void read_patternBank::Loop(TString key)
 		nb = fChain->GetEntry(jentry);   nbytes += nb;
 		// if (Cut(ientry) < 0) continue;
 
+		cover+=frequency;
 
-		event_count++;
-		pattern_count += frequency;
-		cover = (float(pattern_count) / float(total_events)) * (1 - float(total_patterns) / float(total_events));
-
-		cout << " coverage" << cover << endl;
 		coverage->Fill(jentry,cover);
+
 
 
 
@@ -55,7 +52,8 @@ void read_patternBank::Loop(TString key)
 	}
 
 
-	coverage -> Draw("histo");
+	coverage->Scale(1/cover);
+//	coverage -> Draw("histo");
 
 }
 
@@ -69,20 +67,23 @@ void read_patternBank_coverage(){
 	gStyle->SetOptStat(111111);
 	TString key;
 	TString fName;
-	TString name;
+	const int size = 4;
+	TString name[size] ={
+//			"root://cmseos.fnal.gov//store/user/gvidale/TT25/TT25_muPU200_fount_sf1_sf1_50_2610_bank",
+			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
+			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
+			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
+			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank"};
 
-
-	name="patternBankTilted_tt25_sf1_nz1_pt3_attributes_0712"; //master name of file root
-
-	fName = "../patternBank/"+name+".root"; //name of file root to read, with path
-	key = "_"+name;     //just a key for histos
+//	fName = "../patternBank/"+name+".root"; //name of file root to read, with path
+//	key = "_"+name;     //just a key for histos
 
 	//HERE I DEFINE OUTPUT .ROOT WITH THE HISTOGRAMS TO CHECK
 	//file di output contenente gli istogrammi
 
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
-	f = new TFile(name+"_coverage.root","RECREATE");
+	f = new TFile("TT41_coverage.root","RECREATE");
 	isfOpen = f->IsOpen();
 	if (!isfOpen) {
 		cout << "ERROR. Not able to load the confrontoBranches file. Exiting..." << endl;
@@ -90,12 +91,13 @@ void read_patternBank_coverage(){
 	}
 
 
-	read_patternBank a(fName);
-	cout << "pino" << endl;
-	f -> cd();
-	a.Loop(key);
+	for(int r=0; r< size; r++){
+		key = "_"+name[r];     //just a key for histos
+		read_patternBank a("root://cmsxrootd.fnal.gov//store/user/gvidale/TT41/"+name[r]+".root");
+		f->cd();
+		a.Loop(key);
+		}
 
-	//gDirectory->pwd();
 	f -> Write();
 
 	//cout << "ho scritto" << endl;
