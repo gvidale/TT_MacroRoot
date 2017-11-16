@@ -79,8 +79,8 @@ void readtree_roads::Loop(TString key, Int_t charge)
 			vector<unsigned int> full_ssid = AMTTRoads_superstripIds->at(r);   //take the pattern "r", made by 6 (ssids)
 			vector<vector<unsigned int> >  stubref = AMTTRoads_stubRefs->at(r);
 			for(int l=0; l<6;++l){
-				lay=  full_ssid.at(l)/4096;
-				ssid = full_ssid.at(l)%4096;
+				lay=  full_ssid.at(l)/16384;
+				ssid = full_ssid.at(l)%16384;
 				n_stub_ss_lay->Fill(lay,ssid,stubref[l].size()*float(1./nentries)); //normalized per nentries
 				//we should also normalize per # road that light up the same ssid in that layer, in that event. A good estimator of this could be the # of siblings. (average is 8)
 				ssid_lay_road->Fill(lay,ssid,float(1./nentries));
@@ -101,25 +101,25 @@ void readtree_roads::Loop(TString key, Int_t charge)
 		if(jentry%1000==0) cout <<flush<< "@";
 	}
 
-	TCanvas * c = new TCanvas();
-	//   n_stub_ss_lay->SetMaximum(3);
-	//   n_stub_ss_lay->SetMinimum(1); //so that we can manage ssid 0 and maxium that have more stubs due to under over flow.
-	//   n_stub_ss_lay->GetYaxis()->SetRangeUser(0,230);
-	n_stub_ss_lay->Draw("colz");
-	c->Write();
-
-	TCanvas * r = new TCanvas();
-	ssid_lay_road->Draw("colz");
-
-	TCanvas * lay = new TCanvas();
-	lay->SetCanvasSize(1440,900);
-	lay->Divide(4,3);
-	for ( int i =0; i< 11 ; ++i){
-		lay->cd(i+1);
-		xy[i]->Scale(1./n_lay_w_ssid0[i]); //normalize per # lay that have ssid0 in them.
-		xy[i]->Draw("colz");
-		
-	}
+//	TCanvas * c = new TCanvas();
+//	//   n_stub_ss_lay->SetMaximum(3);
+//	//   n_stub_ss_lay->SetMinimum(1); //so that we can manage ssid 0 and maxium that have more stubs due to under over flow.
+//	//   n_stub_ss_lay->GetYaxis()->SetRangeUser(0,230);
+//	n_stub_ss_lay->Draw("colz");
+//	c->Write();
+//
+//	TCanvas * r = new TCanvas();
+//	ssid_lay_road->Draw("colz");
+//
+//	TCanvas * lay = new TCanvas();
+//	lay->SetCanvasSize(1440,900);
+//	lay->Divide(4,3);
+//	for ( int i =0; i< 11 ; ++i){
+//		lay->cd(i+1);
+//		xy[i]->Scale(1./n_lay_w_ssid0[i]); //normalize per # lay that have ssid0 in them.
+//		xy[i]->Draw("colz");
+//
+//	}
 }
 //   TLegend * l = new TLegend(0.1,0.3,0.9,0.7);
 
