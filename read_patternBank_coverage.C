@@ -24,7 +24,6 @@ void read_patternBank::Loop(TString key)
 
 
 
-
 	TH1F * coverage= new TH1F("coverage"+key,"coverage"+key, total_patterns,0,total_patterns);
 	if (key.Contains("flowonly")){
 		coverage->SetLineColor(kRed);
@@ -62,6 +61,7 @@ void read_patternBank::Loop(TString key)
 	}
 
 
+
 	coverage->Scale(1/cover);
 //	coverage -> Draw("histo");
 
@@ -80,15 +80,22 @@ void read_patternBank_coverage(){
 	const int size = 8;
 	TString name[size] ={
 //			"root://cmseos.fnal.gov//store/user/gvidale/TT25/TT25_muPU200_fount_sf1_sf1_50_2610_bank",
-			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
-			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
-			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
-			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
+//			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
+//			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
+//			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
+//			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
+//
+//				"TT33_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
+//				"TT33_muPU200_fount_sf1_sf1_100_2610_bank",
+//				"TT33_muPU200_fount_sf07_sf1_100_2610_bank",
+//				"TT33_muPU200_flowonly_sf07_sf1_pt08_100_2610_bank"};
 
-				"TT33_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
-				"TT33_muPU200_fount_sf1_sf1_100_2610_bank",
-				"TT33_muPU200_fount_sf07_sf1_100_2610_bank",
-				"TT33_muPU200_flowonly_sf07_sf1_pt08_100_2610_bank"};
+			"TT25_muPU200_fount_sf1_sf1_50_2610_bank.log",
+			"TT25_muPU200_fount_sf08_sf1_50_2610_bank.log",
+			"TT25_muPU200_fount_sf06_sf1_50_2610_bank.log",
+			"TT25_muPU200_fount_sf12_sf1_50_2610_bank.log"
+
+	};
 
 //	fName = "../patternBank/"+name+".root"; //name of file root to read, with path
 //	key = "_"+name;     //just a key for histos
@@ -116,6 +123,8 @@ void read_patternBank_coverage(){
 		f->cd();
 		a.Loop(key);
 		}
+
+
 
 	f -> Write();
 
