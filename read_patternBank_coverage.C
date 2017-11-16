@@ -72,7 +72,7 @@ void read_patternBank_coverage(){
 
 	gStyle->SetOptStat(111111);
 	TString key;
-	TString fName;
+
 	const int size = 8;
 	TString name[size] ={
 //			"root://cmseos.fnal.gov//store/user/gvidale/TT25/TT25_muPU200_fount_sf1_sf1_50_2610_bank",
@@ -104,7 +104,11 @@ void read_patternBank_coverage(){
 
 	for(int r=0; r< size; r++){
 		key = "_"+name[r];     //just a key for histos
-		read_patternBank a("root://cmsxrootd.fnal.gov//store/user/gvidale/TT33/"+name[r]+".root");
+		TString fName="0";
+		if (key.Contains("33")) fName ="root://cmsxrootd.fnal.gov//store/user/gvidale/TT33/"+name[r]+".root";
+		if (key.Contains("41"))fName ="root://cmsxrootd.fnal.gov//store/user/gvidale/TT41/"+name[r]+".root";
+		if (key.Contains("25"))fName ="root://cmsxrootd.fnal.gov//store/user/gvidale/TT25/"+name[r]+".root";
+		read_patternBank a(fName);
 		f->cd();
 		a.Loop(key);
 		}
