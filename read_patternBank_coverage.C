@@ -26,6 +26,10 @@ void read_patternBank::Loop(TString key)
 
 
 	TH1F * coverage= new TH1F("coverage"+key,"coverage"+key, total_patterns,0,total_patterns);
+	if (key.Contains("flower")){
+		coverage->SetLineColor(kRed);
+	}
+
 	coverage->SetTitle(";patternID;CumulativeCoverage");
 
 	cout << "pino" << endl;
@@ -35,13 +39,15 @@ void read_patternBank::Loop(TString key)
 		nb = fChain->GetEntry(jentry);   nbytes += nb;
 		// if (Cut(ientry) < 0) continue;
 
+
+		if (key.Contains("flower")){
 		cover+=frequency;
+		coverage->Fill(2*(jentry+1)-1,cover);
+		cover+=frequency;
+		coverage->Fill(2*(jentry+1),cover);
+		}
 
-		coverage->Fill(jentry,cover);
-
-
-
-
+		else coverage->Fill(jentry+1,cover);
 
 
 
@@ -67,14 +73,14 @@ void read_patternBank_coverage(){
 	gStyle->SetOptStat(111111);
 	TString key;
 	TString fName;
-	const int size = 4;
+	const int size = 8;
 	TString name[size] ={
 //			"root://cmseos.fnal.gov//store/user/gvidale/TT25/TT25_muPU200_fount_sf1_sf1_50_2610_bank",
-//			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
-//			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
-//			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
-//			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank"};
-//
+			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
+			"TT41_muPU200_fount_sf1_sf05_100_2610_bank",
+			"TT41_muPU200_fount_sf1_sf1_100_2610_bank",
+			"TT41_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
+
 				"TT33_muPU200_flowonly_sf1_sf1_pt08_100_2610_bank",
 				"TT33_muPU200_fount_sf1_sf1_100_2610_bank",
 				"TT33_muPU200_fount_sf07_sf1_100_2610_bank",
