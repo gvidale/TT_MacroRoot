@@ -26,7 +26,7 @@ void read_patternBank::Loop(TString key)
 
 
 	TH1F * coverage= new TH1F("coverage"+key,"coverage"+key, total_patterns,0,total_patterns);
-	if (key.Contains("flower")){
+	if (key.Contains("flowonly")){
 		coverage->SetLineColor(kRed);
 	}
 
@@ -40,14 +40,18 @@ void read_patternBank::Loop(TString key)
 		// if (Cut(ientry) < 0) continue;
 
 
-		if (key.Contains("flower")){
+
+		if (key.Contains("flowonly")){
 		cover+=frequency;
 		coverage->Fill(2*(jentry+1)-1,cover);
 		cover+=frequency;
 		coverage->Fill(2*(jentry+1),cover);
 		}
 
-		else coverage->Fill(jentry+1,cover);
+		else {
+			cover+=frequency;
+			coverage->Fill(jentry+1,cover);
+		}
 
 
 
