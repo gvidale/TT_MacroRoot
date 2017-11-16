@@ -105,7 +105,7 @@ void read_patternBank_coverage(){
 
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
-	f = new TFile("TT33_coverage.root","RECREATE");
+	f = new TFile("TT25_coverage.root","RECREATE");
 	isfOpen = f->IsOpen();
 	if (!isfOpen) {
 		cout << "ERROR. Not able to load the confrontoBranches file. Exiting..." << endl;
