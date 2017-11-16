@@ -46,8 +46,8 @@ void read_patternAttributes::Loop(TString key)
 
 void read_patternAttributes_ptres(){
 	gStyle->SetOptStat(111111);
-	TString key,fName;
-	const int size = 4;
+	TString key;
+	const int size = 7;
 	TString name[size] ={
 //			"root://cmseos.fnal.gov//store/user/gvidale/TT25/TT25_muPU200_fount_sf1_sf1_50_2610_bank",
 			"TT41_muPU200_flowonly_sf1_sf05_pt08_100_2610_bank",
@@ -68,11 +68,15 @@ void read_patternAttributes_ptres(){
 		return;
 	}
 	for(int r=0; r< size; r++){
-	key = "_"+name[r];     //just a key for histos
-	read_patternAttributes a("root://cmsxrootd.fnal.gov//store/user/gvidale/TT41/"+name[r]+".root");
-	f->cd();
-	a.Loop(key);
-	}
+			key = "_"+name[r];     //just a key for histos
+			TString fName="0";
+			if (key.Contains("33")) fName ="root://cmsxrootd.fnal.gov//store/user/gvidale/TT33/"+name[r]+".root";
+			if (key.Contains("41"))fName ="root://cmsxrootd.fnal.gov//store/user/gvidale/TT41/"+name[r]+".root";
+			if (key.Contains("25"))fName ="root://cmsxrootd.fnal.gov//store/user/gvidale/TT25/"+name[r]+".root";
+			read_patternAttributes a(fName);
+			f->cd();
+			a.Loop(key);
+			}
 	f -> Write();
 
 //	return;
