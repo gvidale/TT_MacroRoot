@@ -79,8 +79,8 @@ void readtree_roads::Loop(TString key, Int_t charge)
 			vector<unsigned int> full_ssid = AMTTRoads_superstripIds->at(r);   //take the pattern "r", made by 6 (ssids)
 			vector<vector<unsigned int> >  stubref = AMTTRoads_stubRefs->at(r);
 			for(int l=0; l<6;++l){
-				lay=  full_ssid.at(l)/16384;
-				ssid = full_ssid.at(l)%16384;
+				lay=  full_ssid.at(l)/4096;
+				ssid = full_ssid.at(l)%4096;
 				n_stub_ss_lay->Fill(lay,ssid,stubref[l].size()*float(1./nentries)); //normalized per nentries
 				//we should also normalize per # road that light up the same ssid in that layer, in that event. A good estimator of this could be the # of siblings. (average is 8)
 				ssid_lay_road->Fill(lay,ssid,float(1./nentries));
