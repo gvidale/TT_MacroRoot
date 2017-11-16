@@ -90,10 +90,10 @@ void read_patternBank_coverage(){
 //				"TT33_muPU200_fount_sf07_sf1_100_2610_bank",
 //				"TT33_muPU200_flowonly_sf07_sf1_pt08_100_2610_bank"};
 
-			"TT25_muPU200_fount_sf1_sf1_50_2610_bank.log",
-			"TT25_muPU200_fount_sf08_sf1_50_2610_bank.log",
-			"TT25_muPU200_fount_sf06_sf1_50_2610_bank.log",
-			"TT25_muPU200_fount_sf12_sf1_50_2610_bank.log"
+			"TT25_muPU200_fount_sf1_sf1_50_2610_bank",
+			"TT25_muPU200_fount_sf08_sf1_50_2610_bank",
+			"TT25_muPU200_fount_sf06_sf1_50_2610_bank",
+			"TT25_muPU200_fount_sf12_sf1_50_2610_bank"
 
 	};
 
