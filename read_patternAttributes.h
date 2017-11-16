@@ -60,7 +60,7 @@ read_patternAttributes::read_patternAttributes(TString fName) : fChain(0)
 {
 
 
-	   TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject(fName);
+	   TFile *f = TFile::Open(fName);
 	   if (!f || !f->IsOpen()) {
 		   f = new TFile(fName);
 	   }
