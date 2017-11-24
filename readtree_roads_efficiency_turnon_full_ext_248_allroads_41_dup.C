@@ -38,12 +38,12 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	Bool_t parse_all_roads_combs = true; //look over all roads fired, to count the total number of combinations. Or, stop at first candidate found.
 	const Int_t stub_threshold = 5;
 	int select_charge = charge;  //select charge to process. "0" keeps all charge
-
 	const Int_t roads_cutoff = 1000000; //infinite bank
-//	const Int_t roads_cutoff = 200;
 	Bool_t draw_histos = false;
 	int tower = 41;
 	Bool_t is_evt_reconstr = false;
+
+//	****************************
 
 	Float_t average_roads_before_reconstruction[4];
 	Float_t true_mu=0;
@@ -102,12 +102,10 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	//41 eta 1.2 2.4; 25 eta -0.5 1.5
 	//41 phi 0.6 1.8; 25 phi 0.6 1.75
 	TH1F * duplicate = new TH1F("duplicate"+name_charge, "duplicate"+key, 100,0, 100);
-        duplicate -> SetTitle("ratio duplicates/roads_fired "+ key+";ratio duplicates/fired; frequency");
-        TH1F * fakes = new TH1F("fakes"+name_charge, "fakes"+key, 100,0, 100);
-        fakes -> SetTitle("ratio fakes/roads_fired "+ key+";ratio fakes/fired; frequency");
+	duplicate -> SetTitle("ratio duplicates/roads_fired "+ key+";ratio duplicates/fired; frequency");
+	TH1F * fakes = new TH1F("fakes"+name_charge, "fakes"+key, 100,0, 100);
+	fakes -> SetTitle("ratio fakes/roads_fired "+ key+";ratio fakes/fired; frequency");
 
-
-	
 	for (int y=0; y<5;++y){
 		sprintf(name,"mu_phi_%2i"+namehisto[y]+name_charge,tower);
 		phi[y] = new TH1F(name,name,20,0.60,1.8);
@@ -123,7 +121,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		pt[y]->SetTitle(TString(name)+";p_{T} [GeV/c];counts");
 	}
 
-//	}
 	for (int y=0; y<3;++y){
 		combs_evt[y] = new TH1F("tot_combs_evt@"+namehisto[y+2]+name_charge,"",500,0,10000);
 		combs_evt[y]->SetTitle("combs per evt @"+namehisto[y+2]+name_charge+"; # total combs per evt; counts");
@@ -136,7 +133,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	for (int y=0; y<4;++y){
 		road_read_before_reconstruction[y]=new TH1I("road_read_before_reconstruction@"+namehisto[y+1]+name_charge,"",100,0,1000);
 		road_read_before_reconstruction[y]->SetTitle("road_read_before_reconstruction@"+namehisto[y+1]+name_charge+"; # roads read; counts");
-
 	}
 
 	TH1I * road_fired = new TH1I("road_fired"+name_charge,"road_fired",65,0,5000);
@@ -177,17 +173,14 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	for (Long64_t jentry=0; jentry<nentries;jentry++) {
 		Long64_t ientry = LoadTree(jentry);
 		if (ientry < 0) break;
-
 		if(test){
-		if (ientry > 100) break;
+			if (ientry > 100) break;
 		}
 		nb = fChain->GetEntry(jentry);   nbytes += nb;
 		// if (Cut(ientry) < 0) continue;
-
 		if (jentry % 1000 == 0) {
 			cout << flush << "@";
 		}
-
 
 //		Reset counters
 		setOfmu.erase(setOfmu.begin(),setOfmu.end()); //each event has a new set of authentic mu
@@ -240,7 +233,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		if(setOfmu.size()>0) {
 			good_entries++;
 		}
-
 		else continue;
 		//go to next event
 
@@ -261,7 +253,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		}
 
 		for (Int_t patt_count=0; patt_count<n_roads_fired; ++patt_count){
-
 			for(map<Int_t,Int_t>::iterator it = setOfmu.begin() ; it!=setOfmu.end(); it++){
 				it->second=0;
 			}
@@ -276,32 +267,23 @@ void readtree_roads::Loop(TString key,Int_t charge)
 			Int_t l=(*AMTTRoads_stubRefs)[patt_count].size();
 			assert(l==6);
 			for (l =0; l<6; ++l){
-
-				//initialize map of n_stub coming from mu and others in that layer
-				mapofn_stub[l]= make_pair(0,0);
-				
-				//LOOP OVER STUBS LIST for that layer, in that pattern, for that event.
+				mapofn_stub[l]= make_pair(0,0);	//initialize map of n_stub coming from mu and others in that layer
 				n_stubs=(*AMTTRoads_stubRefs)[patt_count][l].size();
 				n_stubs_for_combs=n_stubs; //use another counter for combinations
-				//count combinations stubs
 				if(n_stubs_for_combs==0) n_stubs_for_combs=1;
 				combination_for_a_road=combination_for_a_road*n_stubs_for_combs;
 
+				//LOOP OVER STUBS LIST for that layer, in that pattern, for that event.
 				for (Int_t stub_count = 0; stub_count< n_stubs; ++stub_count){
-
 					stub_index=(*AMTTRoads_stubRefs)[patt_count][l][stub_count];
 					trk_index=TTStubs_tpId->at(stub_index);
-
 //					if that trkpart is one of the "true" mu of the event, go ahead
 					if( setOfmu.find(trk_index)== setOfmu.end()) {
 						mapofn_stub[l].second++;
 						continue;
 					}
-
 					else {
 						mapofn_stub[l].first++;
-
-						//layer_phi_zeta = phi_zeta(TTStubs_modId->at(stub_index)); //extract layer info //a[0] is the layer
 						insertYES = setOflayers.insert(l);   //  do not overcount overlap ONLY to see if the mu has been already counted, BUT count double combinations if present, because they go to fitter anyway;
 						if(insertYES.second) {
 							genuine_mu++;
@@ -336,7 +318,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 				n_fak_comb = combination_for_a_road - n_dup_comb;
 			}
 
-
 //			cout << "combination per road_" << patt_count << " " << combination_for_a_road << endl;
 //			cout << "duplicate combination per that road " << n_dup_comb << endl;
 //			cout << "fake comb per taht road " << n_fak_comb << endl;
@@ -358,30 +339,19 @@ void readtree_roads::Loop(TString key,Int_t charge)
 				}
 			}
 
-
-
-
-
-
 //			keep trace of how many roads I need to throw out AM to get a reconstruction candidate.
-
-
 //			*******************************
 //			ROAD EFFICIENCY 4 - 5 - 6 Stub?
 //			*******************************
-
 //			setofmu< trkindex, # stub genuine seen, one for ss >
 //			the iterator is the key (map.first). the value is the number of good stub.
 //			CHECK IF AT LEAST ONE !!!!!! OF THE ORIGINAL TRUE MU TRACKs (USUALLU ONLY ONE, but maybe...) is recognized, if true, goto next event
 //			Fill also an ntuple if anything is found
-
 			for(map<Int_t,Int_t>::iterator it = setOfmu.begin() ; it!=setOfmu.end(); it++){
-
 				if (it->second>=5){
 					average_candidate_roads_perevt++;
 					n_road_duplicates++;
 					ntuple_allinfo->Fill(jentry,it->first,patt_count); //fill ntuple with good event. info as road id.
-
 					if (it->second==5) n_road_5++;
 					alreadyRecognYES=setOfmu_recognized.insert(make_pair(it->first,true));
 					if(alreadyRecognYES.second) {
@@ -433,18 +403,14 @@ void readtree_roads::Loop(TString key,Int_t charge)
 			combs_evt[r]->Fill(tot_combs[r+1]);
 			dup_comb[r]->Fill(tot_dup_combs[r+1]);
 			fak_comb[r]->Fill(tot_fak_combs[r+1]);
-
 		}
 		candid_r_evt->Fill(average_candidate_roads_perevt);
-
 		ratio5_6->Fill(n_road_5/n_road_duplicates*100);
-
 	}
 
 //	************************
 //	FINAL AVERAGE QUANTITIES
 //	************************
-
 	average_roads_fired=road_fired->GetMean();
 	for(int r=0;r<4;r++){
 		average_roads_before_reconstruction[r]=road_read_before_reconstruction[r]->GetMean();
@@ -506,7 +472,6 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	cout << "Road efficiency at ";
 			if(roads_cutoff < 50000) cout<<roads_cutoff <<": "<< efficiency <<endl;
 			if(roads_cutoff > 50000) cout<<"infinite cutoff: "<< efficiency <<endl;
-
 
 	cout << "********************************************" << endl;
 	cout << "Results with road truncation" << endl;
@@ -609,12 +574,11 @@ void readtree_roads::Loop(TString key,Int_t charge)
 //      **********************
 
 void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name = "0", TString key = "0",Int_t charge=1){
-
 	gStyle->SetOptStat(111111);
-	gROOT->SetBatch(kTRUE);
+	gROOT->SetBatch(kTRUE); //no draw plots
 	TString fName;
 	if(name!="0" && key =="0"){
-			cout << "Please provide 'key' string as 2nd arg (sf_XX-64K)" << endl;
+			cout << "Please provide 'key' as description string as 2nd arg (e.g. fount_sf_XX-64K)" << endl;
 			return;
 		}
 	if(name=="0"){//otherwise put it in there
@@ -623,7 +587,6 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name 
 		cout << "please provide file name" << endl;
 		return;
 		}
-
 	cout << "______________________________" << endl;
 	cout << "FILE INPUT: " << name << endl;
 
@@ -635,12 +598,9 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name 
 		return;
 	}
 
-
 	cout << "______________________________" << endl;
 	cout << "FILE OUTPUT: " << name+"_efficiency_248_dup.root" << endl;
-
 //	HERE I DEFINE OUTPUT .ROOT WITH THE HISTOGRAMS TO CHECK
-
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
 	f = new TFile("../roads/TT41/"+name+"_efficiency_148_dup.root","RECREATE");
@@ -649,8 +609,6 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name 
 		cout << "ERROR. Not able to load the output file. Exiting..." << endl;
 		return;
 	}
-
-
 
 	if (charge==11){
 		readtree_roads b(fName);
@@ -666,7 +624,6 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name 
 		f -> cd();
 		a.Loop(key,charge);
 	}
-
 
 	f -> Write();
 	return;
