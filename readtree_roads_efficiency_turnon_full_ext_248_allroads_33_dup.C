@@ -18,7 +18,7 @@ Giorgio Vidale
 #include <set>
 #include <utility>
 #include "functions.h"
-#include "SLHCL1TrackTriggerSimulations/AMSimulation/interface/StubCleaner.h"
+#include "tottmio.h"
 #include <TNtuple.h>
 #include <TEfficiency.h>
 #include <TLegend.h>

@@ -95,7 +95,7 @@ void readtree_roads::Loop(TString key,Int_t charge)
 	fakes -> SetTitle("ratio fakes/roads_fired "+ key+";ratio fakes/fired; frequency");
 
 	TH1F * combs_evt[3];
-	const int trunc[3]={200,400,800};
+	const int trunc[3]={100,200,400};
 	TString namehisto[5] = {"_denominator","_infroads","_200","_400","_800"};
 	TString name_charge;
 	(select_charge==1)? name_charge = "_ch1" : (select_charge==-1)? name_charge="_ch-1" : name_charge = "_chALL";
@@ -551,7 +551,7 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41(TString name = "0
 
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
-	f = new TFile("../roads/TT41/"+name+"_efficiency_248.root","RECREATE");
+	f = new TFile("../roads/TT41/"+name+"_efficiency_124.root","RECREATE");
 	isfOpen = f->IsOpen();
 	if (!isfOpen) {
 		cout << "ERROR. Not able to load the output file. Exiting..." << endl;

@@ -18,7 +18,7 @@ Giorgio Vidale
 #include <set>
 #include <utility>
 #include "functions.h"
-#include "SLHCL1TrackTriggerSimulations/AMSimulation/interface/StubCleaner.h"
+#include "tottmio.h"
 #include <TNtuple.h>
 #include <TEfficiency.h>
 #include <TLegend.h>
@@ -88,7 +88,7 @@ void readtree_roads::Loop(TString key,Int_t charge)
 //	************************************************************
 //	Double_t xbins[25] = {...} array of low-edges (xbins[25] is the upper edge of last bin
 
-	Float_t xbins[18]={2,3,4,5,6,7,8,9,10,20,30,40,50,70,90,110,150,200}; //18 here -> nbins = xbins size -1 = 17
+	Float_t xbins[27]={0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,8,9,10,20,30,40,50,70,90,110,150,200}; //27 here -> nbins = xbins size -1 = 26
 	TH1F * phi[5]; TH1F * eta[5]; TH1F * pt[5];
 	TEfficiency *eff_phi[4]; TEfficiency * eff_eta[4]; TEfficiency * eff_pt[4]; TH1I * road_read_before_reconstruction[4];
 
@@ -118,7 +118,7 @@ void readtree_roads::Loop(TString key,Int_t charge)
 		eta[y]->Sumw2();
 		eta[y]->SetTitle(TString(name)+";#eta;counts");
 		sprintf(name,"mu_pt_%2i"+namehisto[y]+name_charge,tower);
-		pt[y]  = new TH1F(name,name,17,xbins);
+		pt[y]  = new TH1F(name,name,26,xbins);
 		pt[y]->Sumw2();
 		pt[y]->SetTitle(TString(name)+";p_{T} [GeV/c];counts");
 	}
@@ -643,7 +643,7 @@ void readtree_roads_efficiency_turnon_full_ext_248_allroads_41_dup(TString name 
 
 	bool isfOpen;
 	TFile* f = 0; isfOpen = false;
-	f = new TFile("../roads/TT41/"+name+"_efficiency_248_dup.root","RECREATE");
+	f = new TFile("../roads/TT41/"+name+"_efficiency_148_dup.root","RECREATE");
 	isfOpen = f->IsOpen();
 	if (!isfOpen) {
 		cout << "ERROR. Not able to load the output file. Exiting..." << endl;
